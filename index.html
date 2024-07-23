@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Form</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+</head>
+<body>
+<img src="logo.jpg" alt="Corner Image" class="corner-image">
+    <div class="center text-center">
+        <form id="loginForm">
+                <label class="l1">Batch:</label>
+                <select name="y">
+                    <option value="1">2023-2027</option>
+                </select><br><br>
+                <label class="l1">Semester:</label>
+                <select name="s">
+                    <option value="1">First</option>
+                    <option value="2">Second</option>
+                </select><br><br>
+                <label class="l1">Department:</label>
+                <select name="d">
+                    <option value="CSE">CSE</option>
+                    <option value="AIML">AIML</option>
+                    <option value="AIDS">AIDS</option>
+                    <option value="EEE">EEE</option>
+                </select><br><br>
+                <input type="submit" value="Next" class="btn btn-outline-light">
+        </form>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+        <script>
+            document.getElementById('loginForm').addEventListener('submit', function(event) {
+                event.preventDefault();
+                const formData = new FormData(event.target);
+                const data = Object.fromEntries(formData.entries());
+                localStorage.setItem('formData', JSON.stringify(data));
+                window.location.href = 'sub1.html';
+            });
+        </script>
+    </div>
+</body>
+</html>

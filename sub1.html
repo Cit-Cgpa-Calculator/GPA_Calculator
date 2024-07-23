@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subjects Selection</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+</head>
+<body>
+    <img src="logo.jpg" alt="Corner Image" class="corner-image">
+    <div class="center text-center">
+        <form id="subjectForm">
+            <div id="subjectInputs"></div>
+            <br><br>
+            <input type="submit" value="Submit" class="btn btn-outline-light">
+        </form>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const formData = JSON.parse(localStorage.getItem('formData'));
+                if (!formData) {
+                    alert('No form data found. Please complete the previous form.');
+                    window.location.href = 'index.html';
+                }
+                const subjectInputs = document.getElementById('subjectInputs');
+                const subjectCount = formData.s === '1' ? 7 : 6;
+
+                for (let i = 1; i <= subjectCount; i++) {
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.name = `Sub${i}`;
+                    input.placeholder = `Subject ${i}`;
+                    input.className = 'form-control';
+                    subjectInputs.appendChild(input);
+                    subjectInputs.appendChild(document.createElement('br'));
+                }
+            });
+
+            document.getElementById('subjectForm').addEventListener('submit', async function(event) {
+                event.preventDefault();
+                const formData = new FormData(event.target);
+                const subjects = [];
+                formData.forEach((value, key) => subjects.push(value));
+
+                try {
+                    const response = await fetch('http://localhost:3000/getCredits', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ subjects })
+                    });
+
+                    const creditsData = await response.json();
+                    const credits = {};
+                    creditsData.forEach(item => credits[item.sub_id] = item.credits);
+
+                    const grades = [];
+                    for (let i = 1; i <= subjects.length; i++) {
+                        const grade = prompt(`Enter grade for ${subjects[i - 1]}`);
+                        grades.push(grade);
+                    }
+
+                    const gradePoints = {
+                        "O": 10,
+                        "A+": 9,
+                        "A": 8,
+                        "B+": 7,
+                        "B": 6,
+                    };
+
+                    let totalCredits = 0;
+                    let weightedSum = 0;
+
+                    for (let i = 0; i < subjects.length; i++) {
+                        const subject = subjects[i];
+                        const grade = grades[i];
+                        totalCredits += credits[subject];
+                        weightedSum += credits[subject] * (gradePoints[grade] || 0);
+                    }
+
+                    const cgpa = (totalCredits !== 0) ? (weightedSum / totalCredits).toFixed(2) : 0;
+                    alert(`CGPA: ${cgpa}`);
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('An error occurred while calculating CGPA.');
+                }
+            });
+        </script>
+    </div>
+</body>
+</html>
